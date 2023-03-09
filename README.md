@@ -28,6 +28,8 @@
 
 * Using VirtualBox to create an VM with 4 cores, 6 GB RAM, 50GB diskspace and using bridge network using the network interface of the host machine (use the `ifconfig` and `ping` command to test).
 
+* When installing Ubuntu Server, just following the default installation.
+
 * Following this guideline to install DevStack:
   * [https://docs.openstack.org/devstack/latest/](https://docs.openstack.org/devstack/latest/)
   * Note: in the `local.conf` file, you need to change/add the `HOST_IP` to the IP address of the VM.
