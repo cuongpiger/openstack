@@ -27,6 +27,7 @@
   * [https://ubuntu.com/download/server](https://ubuntu.com/download/server)
 
 * Using VirtualBox to create an VM with 4 cores, 6 GB RAM, 50GB diskspace and using bridge network using the network interface of the host machine (use the `ifconfig` and `ping` command to test).
+  ![](./img/01.png)
 
 * When installing Ubuntu Server, just following the default installation.
 
