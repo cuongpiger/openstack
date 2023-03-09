@@ -34,3 +34,17 @@
 * Following this guideline to install DevStack:
   * [https://docs.openstack.org/devstack/latest/](https://docs.openstack.org/devstack/latest/)
   * Note: in the `local.conf` file, you need to change/add the `HOST_IP` to the IP address of the VM.
+
+# 3. Troubleshooting
+* If there is any issue with the installation, you can use the following command to clean up the installation:
+  ```bash
+  # workdir: devstack
+  ./unstack.sh
+  ./clean.sh # (optional, god will pray for you)
+  ```
+
+* And then you can re-run the installation again.
+  ```bash
+  # workdir: devstack
+  ./stack.sh
+  ```
