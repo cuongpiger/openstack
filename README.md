@@ -14,5 +14,10 @@
 
 * The `clouds.yaml` file does not include the `password` field because of security reasons, so you need to add the `password` field to the `clouds.yaml` file, look at the file `clouds.yaml` in the `resources` directory for more details.
 
+* Install dependencies:
+  ```bash
+  pip install -r requirements.txt
+  ```
+
 * Run the `main.py` file to test the **OpenStack** service, this image below shows the flavors inside OpenStack:
   ![](./img/02.png)
