@@ -68,3 +68,12 @@
   ```bash
   source admin-openrc
   ```
+
+# 5. Uninstall DevStack
+* To uninstall DevStack, you can run the following command:
+  ```bash
+  # workdir: devstack
+  ./unstack.sh
+  ./clean.sh
+  sudo rm -rf /opt/stack
+  ```
