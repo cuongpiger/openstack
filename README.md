@@ -49,3 +49,22 @@
   # workdir: devstack
   ./stack.sh
   ```
+
+# 4. Interact with OpenStackCLI
+* To interact with OpenStack CLI, you need the config file called `admin-openrc`.
+* This is the content of this file:
+  ```bash
+  export OS_PROJECT_DOMAIN_NAME=default
+  export OS_USER_DOMAIN_NAME=default
+  export OS_PROJECT_NAME=admin
+  export OS_USERNAME=admin
+  export OS_PASSWORD=secret
+  export OS_AUTH_URL=http://192.168.239.196/identity
+  export OS_IDENTITY_API_VERSION=3
+  export OS_IMAGE_API_VERSION=2
+  ```
+* With the `OS_AUTH_URL` is the IP address of the VM followed by `/identity`.
+* To set up all this environment variables, you can run the following command:
+  ```bash
+  source admin-openrc
+  ```
