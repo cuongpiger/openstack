@@ -7,3 +7,12 @@
 * DevStack was created to make the job of deploying OpenStack in **test** and **development** environment quicker, easier.
 * DevStack is a collection of documented Bash shell scripts that are used to prepare an environment for configure, and deploy OpenStack.
 * But DevStack is not used to deploy an OpenStack production environment.
+
+## 2.2. Deploying DevStack
+* Reading the book.
+
+## 2.3. Using the OpenStack Dashboard
+### 2.3.1. Overview screen
+* Reading the book.
+
+### 2.3.2. Access & Security Screen
