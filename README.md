@@ -18,3 +18,16 @@
   ```
 * Following this guideline to install DevStack using `multipass`:
   * [https://docs.openstack.org/devstack/latest/](https://docs.openstack.org/devstack/latest/)
+
+# 2. Using VirtualBox to run DevStack
+* Install VirtualBox on your host machine, downloading `*.deb` file from this link and then installing:
+  * [https://www.virtualbox.org/wiki/Linux_Downloads](https://www.virtualbox.org/wiki/Linux_Downloads)
+
+* Download the Ubuntu Server ISO image from this link:
+  * [https://ubuntu.com/download/server](https://ubuntu.com/download/server)
+
+* Using VirtualBox to create an VM with 4 cores, 6 GB RAM, 50GB diskspace and using bridge network using the network interface of the host machine (use the `ifconfig` and `ping` command to test).
+
+* Following this guideline to install DevStack:
+  * [https://docs.openstack.org/devstack/latest/](https://docs.openstack.org/devstack/latest/)
+  * Note: in the `local.conf` file, you need to change/add the `HOST_IP` to the IP address of the VM.
