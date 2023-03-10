@@ -47,12 +47,14 @@
 * an image is a file that contains the complete state of an instance, including the operating system, applications, and any data that was stored on the instance.
 * Images are used to create new instances, allowing you to easily replicate an existing setup or create a new one from scratch.
 * You can think of images as "VMs waiting to happen" void of user data.
+* In summary, image is operating system configurations and data for creating new VMs.
 
 ###### \#Snapshots
-* **Snapshots** are used to create a backup of an instance. You can think of snapshots as "VMs that have happened" with user data.
+* **Snapshots** (also called **Volume snapshots**) are used to create a backup of an instance. You can think of snapshots as "VMs that have happened" with user data.
 * There is a transitive relationship between images and snapshots:
   ![](./img/01.png)
   * Image create virtual machines, machines then creating snapshots, so snapshots are created from images.
 
+* So, exact replicas of data contained in the volume of a VM. These can be used as backups or to create a new VM with the data and configuration of an existing VM.
 * So, in OpenStack, images = snapshots + metadata (user data). The image below shows you the relationship between images and snapshots:
   ![](./img/02.png)
