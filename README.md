@@ -37,6 +37,7 @@
     ![](./img/02.png)
 
 # 3. Troubleshooting
+## 3.1. DevStack works unstable
 * If there is any issue with the installation, you can use the following command to clean up the installation:
   ```bash
   # workdir: devstack
@@ -49,6 +50,10 @@
   # workdir: devstack
   ./stack.sh
   ```
+
+## 3.2. Dynamic IP address of VM
+* In the case you running DevStack in VM, you need to change the `HOST_IP` in the `local.conf` file to the IP address of the VM.
+* Sometimes, when you run the VM again, it will be able change the IP address of the VM, you need to you the `ifconfig` to check the new IP address and update env variable `HOST_IP` in the `local.conf` inside `devstack` directory.
 
 # 4. Interact with OpenStackCLI
 * To interact with OpenStack CLI, you need the config file called `admin-openrc`.
