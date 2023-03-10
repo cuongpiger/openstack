@@ -3,8 +3,7 @@
 * DevStack helps you to deploy a single-node OpenStack cloud without knowing a great deal about OpenStack and without the need for a bunch of hardware.
 
 ## Important things to remember
-* [Security groups](#security-groups)
-* [Key pairs](#key-pairs)
+> [Security groups](#security-groups), [Key pairs](#key-pairs)
 
 ## 2.1. What is DevStack
 * DevStack was created to make the job of deploying OpenStack in **test** and **development** environment quicker, easier.
