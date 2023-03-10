@@ -1,9 +1,11 @@
 # Chapter 02. Taking an OpenStack test-drive
-* To interact with OpenStack, you use DevStack
-* DevStack helps you to deploy a single-node OpenStack cloud without knowing a great deal about OpenStack and without the need for a bunch of hardware.
-
 ## Important things to remember
 > [`security groups`](#security-groups), [`key pairs`](#key-pairs)
+
+<hr>
+
+* To interact with OpenStack, you use DevStack
+* DevStack helps you to deploy a single-node OpenStack cloud without knowing a great deal about OpenStack and without the need for a bunch of hardware.
 
 ## 2.1. What is DevStack
 * DevStack was created to make the job of deploying OpenStack in **test** and **development** environment quicker, easier.
@@ -28,4 +30,11 @@
 * In short, security groups are like personal firewalls for specific groups of instances of VMs.
 
 ###### \#Key pairs
-* OpenStack provide a feature called **Key Pairs**.
+* OpenStack provide a feature called **Key Pairs** used to provide secure remote access to instaces.
+* A key pair consists of two parts: **a public key** and **a private key**.
+  * The public key is used to encrypt data.
+  * The private key is used to decrypt data.
+* When you launch an instance in OpenStack, you can specify a key pair that will be associated with that instance. This key pair allows you to securely log-in to the instance using SSH (Secure Shell) from your local machine.
+* To create a key pair in OpenStack, you can use CLI, Dashboard, or API.
+* It is important to note that the private key should be kept secure, as anyone with access to it can log-in to the associated instance.
+* The public key can be shared with others, as it is used only for encrypting data send to the instance.
