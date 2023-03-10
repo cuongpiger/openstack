@@ -58,3 +58,5 @@
 * So, exact replicas of data contained in the volume of a VM. These can be used as backups or to create a new VM with the data and configuration of an existing VM.
 * So, in OpenStack, images = snapshots + metadata (user data). The image below shows you the relationship between images and snapshots:
   ![](./img/02.png)
+
+### 2.3.4. Volumes screen
