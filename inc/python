@@ -180,7 +180,6 @@ function pip_install {
   fi
 
   cmd_pip="$cmd_pip install"
-  $cmd_pip "wheel==0.40.0"
   # Always apply constraints
   cmd_pip="$cmd_pip -c $REQUIREMENTS_DIR/upper-constraints.txt"
 
