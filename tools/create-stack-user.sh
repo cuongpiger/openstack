@@ -6,7 +6,7 @@
 # - create a group named $STACK_USER if it does not exist
 # - create a user named $STACK_USER if it does not exist
 #
-# - home is $DEST
+#   - home is $DEST
 #
 # - configure sudo for $STACK_USER
 
@@ -15,10 +15,13 @@
 # and it was time for this nonsense to stop.  Run this script as root to create
 # the user and configure sudo.
 
+echo "[INFO] This script must be run as root or with sudo privileges."
+set -o errexit
+
 # Keep track of the DevStack directory
 TOP_DIR=$(cd $(dirname "$0")/.. && pwd)
 
-# Import common functions inside functions.sh file
+# Import common functions
 source $TOP_DIR/functions
 
 # Determine what system we are running on.  This provides ``os_VENDOR``,
@@ -32,30 +35,30 @@ source $TOP_DIR/stackrc
 # Give the non-root user the ability to run as **root** via ``sudo``
 is_package_installed sudo || is_package_installed sudo-ldap || install_package sudo
 
-[[ -z "$STACK_USER" ]] && die "STACK_USER is not set. Exiting."
+[[ -z "$STACK_USER" ]] && die "[FATAL] STACK_USER is not set. Exiting."
 
 if ! getent group $STACK_USER >/dev/null; then
-    echo "Creating a group called $STACK_USER"
-    groupadd $STACK_USER
+  echo "[INFO] Creating a group called $STACK_USER"
+  groupadd $STACK_USER
 fi
 
 if ! getent passwd $STACK_USER >/dev/null; then
-    echo "Creating a user called $STACK_USER"
-    useradd -g $STACK_USER -s /bin/bash -d $DEST -m $STACK_USER
-    # RHEL based distros create home dir with 700 permissions,
-    # And Ubuntu 21.04+ with 750, i.e missing executable
-    # permission for either group or others
-    # Devstack deploy will have issues with this, fix it by
-    # adding executable permission
-    if [[ $(stat -c '%A' $DEST|grep -o x|wc -l) -lt 3 ]]; then
-        echo "Executable permission missing for $DEST, adding it"
-        chmod +x $DEST
-    fi
+  echo "[INFO] Creating a user called $STACK_USER"
+  useradd -g $STACK_USER -s /bin/bash -d $DEST -m $STACK_USER
+  # RHEL based distros create home dir with 700 permissions,
+  # And Ubuntu 21.04+ with 750, i.e missing executable
+  # permission for either group or others
+  # Devstack deploy will have issues with this, fix it by
+  # adding executable permission
+  if [[ $(stat -c '%A' $DEST | grep -o x | wc -l) -lt 3 ]]; then
+    echo "[INFO] Executable permission missing for $DEST, adding it"
+    chmod +x $DEST
+  fi
 fi
 
-echo "Giving stack user passwordless sudo privileges"
+echo "[INFO] Giving stack user passwordless sudo privileges"
 # UEC images ``/etc/sudoers`` does not have a ``#includedir``, add one
 grep -q "^#includedir.*/etc/sudoers.d" /etc/sudoers ||
-    echo "#includedir /etc/sudoers.d" >> /etc/sudoers
-( umask 226 && echo "$STACK_USER ALL=(ALL) NOPASSWD:ALL" \
-    > /etc/sudoers.d/50_stack_sh )
+  echo "[INFO] #includedir /etc/sudoers.d" >>/etc/sudoers
+(umask 226 && echo "$STACK_USER ALL=(ALL) NOPASSWD:ALL" \
+  >/etc/sudoers.d/50_stack_sh)
