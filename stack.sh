@@ -315,7 +315,404 @@ elif [[ $DISTRO == "openEuler-22.03" ]]; then
 fi
 
 # Ensure python is installed
-# --------------------------
 install_python
+
+# Set up logging level
+VERBOSE=$(trueorfalse True VERBOSE)
+VERBOSE_NO_TIMESTAMP=$(trueorfalse False VERBOSE)
+
+# Draw a spinner so the user knows something is happening
+function spinner {
+  local delay=0.75
+  local spinstr='/-\|'
+  printf "..." >&3
+  while [ true ]; do
+    local temp=${spinstr#?}
+    printf "[%c]" "$spinstr" >&3
+    local spinstr=$temp${spinstr%"$temp"}
+    sleep $delay
+    printf "\b\b\b" >&3
+  done
+}
+
+function kill_spinner {
+  if [ ! -z "$LAST_SPINNER_PID" ]; then
+    kill >/dev/null 2>&1 $LAST_SPINNER_PID
+    printf "\b\b\bdone\n" >&3
+  fi
+}
+
+# Echo text to the log file, summary log file and stdout
+# echo_summary "something to say"
+function echo_summary {
+  if [[ -t 3 && "$VERBOSE" != "True" ]]; then
+    kill_spinner
+    echo -n -e $@ >&6
+    spinner &
+    LAST_SPINNER_PID=$!
+  else
+    echo -e $@ >&6
+  fi
+}
+
+# Echo text only to stdout, no log files
+# echo_nolog "something not for the logs"
+function echo_nolog {
+  echo $@ >&3
+}
+
+# Set up logging for ``stack.sh``
+# Set ``LOGFILE`` to turn on logging
+# Append '.xxxxxxxx' to the given name to maintain history
+# where 'xxxxxxxx' is a representation of the date the file was created
+TIMESTAMP_FORMAT=${TIMESTAMP_FORMAT:-"%F-%H%M%S"}
+LOGDAYS=${LOGDAYS:-7}
+CURRENT_LOG_TIME=$(date "+$TIMESTAMP_FORMAT")
+
+if [[ -n "$LOGFILE" ]]; then
+  # Clean up old log files.  Append '.*' to the user-specified
+  # ``LOGFILE`` to match the date in the search template.
+  LOGFILE_DIR="${LOGFILE%/*}"   # dirname
+  LOGFILE_NAME="${LOGFILE##*/}" # basename
+  mkdir -p $LOGFILE_DIR
+  find $LOGFILE_DIR -maxdepth 1 -name $LOGFILE_NAME.\* -mtime +$LOGDAYS -exec rm {} \;
+  LOGFILE=$LOGFILE.${CURRENT_LOG_TIME}
+  SUMFILE=$LOGFILE.summary.${CURRENT_LOG_TIME}
+
+  # Redirect output according to config
+
+  # Set fd 3 to a copy of stdout. So we can set fd 1 without losing
+  # stdout later.
+  exec 3>&1
+  if [[ "$VERBOSE" == "True" ]]; then
+    _of_args="-v"
+    if [[ "$VERBOSE_NO_TIMESTAMP" == "True" ]]; then
+      _of_args="$_of_args --no-timestamp"
+    fi
+    # Set fd 1 and 2 to write the log file
+    exec 1> >($PYTHON $TOP_DIR/tools/outfilter.py $_of_args -o "${LOGFILE}") 2>&1
+    # Set fd 6 to summary log file
+    exec 6> >($PYTHON $TOP_DIR/tools/outfilter.py -o "${SUMFILE}")
+  else
+    # Set fd 1 and 2 to primary logfile
+    exec 1> >($PYTHON $TOP_DIR/tools/outfilter.py -o "${LOGFILE}") 2>&1
+    # Set fd 6 to summary logfile and stdout
+    exec 6> >($PYTHON $TOP_DIR/tools/outfilter.py -v -o "${SUMFILE}" >&3)
+  fi
+
+  echo_summary "stack.sh log $LOGFILE"
+  # Specified logfile name always links to the most recent log
+  ln -sf $LOGFILE $LOGFILE_DIR/$LOGFILE_NAME
+  ln -sf $SUMFILE $LOGFILE_DIR/$LOGFILE_NAME.summary
+else
+  # Set up output redirection without log files
+  # Set fd 3 to a copy of stdout. So we can set fd 1 without losing
+  # stdout later.
+  exec 3>&1
+  if [[ "$VERBOSE" != "True" ]]; then
+    # Throw away stdout and stderr
+    exec 1>/dev/null 2>&1
+  fi
+  # Always send summary fd to original stdout
+  exec 6> >($PYTHON $TOP_DIR/tools/outfilter.py -v >&3)
+fi
+
+# Basic test for ``$DEST`` path permissions (fatal on error unless skipped)
+check_path_perm_sanity ${DEST}
+
+# Kill background processes on exit
+trap exit_trap EXIT
+function exit_trap {
+  local r=$?
+  jobs=$(jobs -p)
+  # Only do the kill when we're logging through a process substitution,
+  # which currently is only to verbose logfile
+  if [[ -n $jobs && -n "$LOGFILE" && "$VERBOSE" == "True" ]]; then
+    echo "exit_trap: cleaning up child processes"
+    kill 2>&1 $jobs
+  fi
+
+  #Remove timing data file
+  if [ -f "$OSCWRAP_TIMER_FILE" ]; then
+    rm "$OSCWRAP_TIMER_FILE"
+  fi
+
+  # Kill the last spinner process
+  kill_spinner
+
+  if [[ $r -ne 0 ]]; then
+    echo "Error on exit"
+    # If we error before we've installed os-testr, this will fail.
+    if type -p generate-subunit >/dev/null; then
+      generate-subunit $DEVSTACK_START_TIME $SECONDS 'fail' >>${SUBUNIT_OUTPUT}
+    fi
+    if [[ -z $LOGDIR ]]; then
+      ${PYTHON} $TOP_DIR/tools/worlddump.py
+    else
+      ${PYTHON} $TOP_DIR/tools/worlddump.py -d $LOGDIR
+    fi
+  else
+    # If we error before we've installed os-testr, this will fail.
+    if type -p generate-subunit >/dev/null; then
+      generate-subunit $DEVSTACK_START_TIME $SECONDS >>${SUBUNIT_OUTPUT}
+    fi
+  fi
+
+  exit $r
+}
+
+# Exit on any errors so that errors don't compound
+trap err_trap ERR
+function err_trap {
+  local r=$?
+  set +o xtrace
+  if [[ -n "$LOGFILE" ]]; then
+    echo "${0##*/} failed: full log in $LOGFILE"
+  else
+    echo "${0##*/} failed"
+  fi
+  exit $r
+}
+
+# Begin trapping error exit codes
+set -o errexit
+
+# Print the kernel version
+uname -a
+
+# Reset the bundle of CA certificates
+SSL_BUNDLE_FILE="$DATA_DIR/ca-bundle.pem"
+rm -f $SSL_BUNDLE_FILE
+
+# Import common services (database, message queue) configuration
+source $TOP_DIR/lib/database
+source $TOP_DIR/lib/rpc_backend
+
+# Clone all external plugins
+fetch_plugins
+
+# Plugin Phase 0: override_defaults - allow plugins to override
+# defaults before other services are run
+run_phase override_defaults
+
+# Import Apache functions
+source $TOP_DIR/lib/apache
+
+# Import TLS functions
+source $TOP_DIR/lib/tls
+
+# Source project function libraries
+source $TOP_DIR/lib/infra
+source $TOP_DIR/lib/libraries
+source $TOP_DIR/lib/lvm
+source $TOP_DIR/lib/horizon
+source $TOP_DIR/lib/keystone
+source $TOP_DIR/lib/glance
+source $TOP_DIR/lib/nova
+source $TOP_DIR/lib/placement
+source $TOP_DIR/lib/cinder
+source $TOP_DIR/lib/swift
+source $TOP_DIR/lib/neutron
+source $TOP_DIR/lib/ldap
+source $TOP_DIR/lib/dstat
+source $TOP_DIR/lib/tcpdump
+source $TOP_DIR/lib/etcd3
+source $TOP_DIR/lib/os-vif
+
+# Phase: source
+run_phase source
+
+# Interactive Configuration
+# -------------------------
+
+# Do all interactive config up front before the logging spew begins
+
+# Generic helper to configure passwords
+function read_password {
+  local xtrace
+  xtrace=$(set +o | grep xtrace)
+  set +o xtrace
+  var=$1
+  msg=$2
+  pw=${!var}
+
+  if [[ -f $RC_DIR/localrc ]]; then
+    localrc=$TOP_DIR/localrc
+  else
+    localrc=$TOP_DIR/.localrc.password
+  fi
+
+  # If the password is not defined yet, proceed to prompt user for a password.
+  if [ ! $pw ]; then
+    # If there is no localrc file, create one
+    if [ ! -e $localrc ]; then
+      touch $localrc
+    fi
+
+    # Presumably if we got this far it can only be that our
+    # localrc is missing the required password.  Prompt user for a
+    # password and write to localrc.
+
+    echo ''
+    echo '################################################################################'
+    echo $msg
+    echo '################################################################################'
+    echo "This value will be written to ${localrc} file so you don't have to enter it "
+    echo "again.  Use only alphanumeric characters."
+    echo "If you leave this blank, a random default value will be used."
+    pw=" "
+    while true; do
+      echo "Enter a password now:"
+      read -e $var
+      pw=${!var}
+      [[ "$pw" = "$(echo $pw | tr -cd [:alnum:])" ]] && break
+      echo "Invalid chars in password.  Try again:"
+    done
+    if [ ! $pw ]; then
+      pw=$(generate_hex_string 10)
+    fi
+    eval "$var=$pw"
+    echo "$var=$pw" >>$localrc
+  fi
+
+  # restore previous xtrace value
+  $xtrace
+}
+
+# Database Configuration
+# ----------------------
+
+# To select between database backends, add the following to ``local.conf``:
+#
+#    disable_service mysql
+#    enable_service postgresql
+#
+# The available database backends are listed in ``DATABASE_BACKENDS`` after
+# ``lib/database`` is sourced. ``mysql`` is the default.
+
+if initialize_database_backends; then
+  echo "Using $DATABASE_TYPE database backend"
+  # Last chance for the database password. This must be handled here
+  # because read_password is not a library function.
+  read_password DATABASE_PASSWORD "ENTER A PASSWORD TO USE FOR THE DATABASE."
+
+  define_database_baseurl
+else
+  echo "No database enabled"
+fi
+
+# Queue Configuration
+# -------------------
+
+# Rabbit connection info
+# In multi node DevStack, second node needs ``RABBIT_USERID``, but rabbit
+# isn't enabled.
+if is_service_enabled rabbit; then
+  read_password RABBIT_PASSWORD "ENTER A PASSWORD TO USE FOR RABBIT."
+fi
+
+# Keystone
+# --------
+
+if is_service_enabled keystone; then
+  # Services authenticate to Identity with servicename/``SERVICE_PASSWORD``
+  read_password SERVICE_PASSWORD "ENTER A SERVICE_PASSWORD TO USE FOR THE SERVICE AUTHENTICATION."
+  # Horizon currently truncates usernames and passwords at 20 characters
+  read_password ADMIN_PASSWORD "ENTER A PASSWORD TO USE FOR HORIZON AND KEYSTONE (20 CHARS OR LESS)."
+
+  # Keystone can now optionally install OpenLDAP by enabling the ``ldap``
+  # service in ``local.conf`` (e.g. ``enable_service ldap``).
+  # To clean out the Keystone contents in OpenLDAP set ``KEYSTONE_CLEAR_LDAP``
+  # to ``yes`` (e.g. ``KEYSTONE_CLEAR_LDAP=yes``) in ``local.conf``.  To enable the
+  # Keystone Identity Driver (``keystone.identity.backends.ldap.Identity``)
+  # set ``KEYSTONE_IDENTITY_BACKEND`` to ``ldap`` (e.g.
+  # ``KEYSTONE_IDENTITY_BACKEND=ldap``) in ``local.conf``.
+
+  # Only request LDAP password if the service is enabled
+  if is_service_enabled ldap; then
+    read_password LDAP_PASSWORD "ENTER A PASSWORD TO USE FOR LDAP"
+  fi
+fi
+
+# Swift
+# -----
+
+if is_service_enabled s-proxy; then
+  # We only ask for Swift Hash if we have enabled swift service.
+  # ``SWIFT_HASH`` is a random unique string for a swift cluster that
+  # can never change.
+  read_password SWIFT_HASH "ENTER A RANDOM SWIFT HASH."
+
+  if [[ -z "$SWIFT_TEMPURL_KEY" ]] && [[ "$SWIFT_ENABLE_TEMPURLS" == "True" ]]; then
+    read_password SWIFT_TEMPURL_KEY "ENTER A KEY FOR SWIFT TEMPURLS."
+  fi
+fi
+
+# Save configuration values
+save_stackenv $LINENO
+
+# Install Packages
+# ================
+
+# OpenStack uses a fair number of other projects.
+
+# Bring down global requirements before any use of pip_install. This is
+# necessary to ensure that the constraints file is in place before we
+# attempt to apply any constraints to pip installs.
+# We always need the master branch in addition to any stable branch, so
+# override GIT_DEPTH here.
+GIT_DEPTH=0 git_clone $REQUIREMENTS_REPO $REQUIREMENTS_DIR $REQUIREMENTS_BRANCH
+
+# Install package requirements
+# Source it so the entire environment is available
+echo_summary "Installing package prerequisites"
+source $TOP_DIR/tools/install_prereqs.sh
+
+# Configure an appropriate Python environment.
+#
+# NOTE(ianw) 2021-08-11 : We install the latest pip here because pip
+# is very active and changes are not generally reflected in the LTS
+# distros.  This often involves important things like dependency or
+# conflict resolution, and has often been required because the
+# complicated constraints etc. used by openstack have tickled bugs in
+# distro versions of pip.  We want to find these problems as they
+# happen, rather than years later when we try to update our LTS
+# distro.  Whilst it is clear that global installations of upstream
+# pip are less and less common, with virtualenv's being the general
+# approach now; there are a lot of devstack plugins that assume a
+# global install environment.
+if [[ "$OFFLINE" != "True" ]]; then
+    PYPI_ALTERNATIVE_URL=${PYPI_ALTERNATIVE_URL:-""} $TOP_DIR/tools/install_pip.sh
+fi
+
+# Do the ugly hacks for broken packages and distros
+source $TOP_DIR/tools/fixup_stuff.sh
+fixup_all
+
+# Install subunit for the subunit output stream
+pip_install -U os-testr
+
+# the default rate limit of 1000 messages / 30 seconds is not
+# sufficient given how verbose our logging is.
+iniset -sudo /etc/systemd/journald.conf "Journal" "RateLimitBurst" "0"
+sudo systemctl restart systemd-journald
+
+# Virtual Environment
+# -------------------
+
+# Install required infra support libraries
+install_infra
+
+# Install bindep
+$VIRTUALENV_CMD $DEST/bindep-venv
+# TODO(ianw) : optionally install from zuul checkout?
+$DEST/bindep-venv/bin/pip install bindep
+export BINDEP_CMD=${DEST}/bindep-venv/bin/bindep
+
+# Install packages as defined in plugin bindep.txt files
+pkgs="$( _get_plugin_bindep_packages )"
+if [[ -n "${pkgs}" ]]; then
+    install_package ${pkgs}
+fi
 
 echo "FINISH"
