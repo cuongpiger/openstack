@@ -767,4 +767,27 @@ echo_summary "Installing OpenStack project source"
 # Install additional libraries
 install_libs
 
+# Install client libraries
+install_keystoneauth
+install_keystoneclient
+install_glanceclient
+install_cinderclient
+install_novaclient
+if is_service_enabled swift glance horizon; then
+    install_swiftclient
+fi
+if is_service_enabled neutron nova horizon; then
+    install_neutronclient
+fi
+
+# Install middleware
+install_keystonemiddleware
+
+if is_service_enabled keystone; then
+    if [ "$KEYSTONE_SERVICE_HOST" == "$SERVICE_HOST" ]; then
+        stack_install_service keystone
+        configure_keystone
+    fi
+fi
+
 echo "FINISH"

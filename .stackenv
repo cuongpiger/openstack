@@ -1,4 +1,4 @@
-# 2023-03-28-161138 652
+# 2023-03-28-223149 652
 BASE_SQL_CONN=mysql+pymysql://root:secret@127.0.0.1
 DATA_DIR=/opt/stack/data
 DEST=/opt/stack
