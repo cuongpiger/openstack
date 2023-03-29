@@ -28,6 +28,16 @@
   # workdir: /devstack
   sudo su - stack
   ```
+* [Optional] Alias for testing.
+  ```bash
+  function stackall() {
+    cd /devstack && clear && ./stack.sh
+  }
+  
+  function unstackall() {
+    cd /devstack && clear && ./unstack.sh && ./clean.sh
+  }
+  ```
 * Run `stack.sh` script.
   ```bash
   # workdir: /devstack
