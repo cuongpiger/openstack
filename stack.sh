@@ -828,4 +828,25 @@ if is_service_enabled nova; then
   configure_nova
 fi
 
+if is_service_enabled placement; then
+  # placement api
+  stack_install_service placement
+  configure_placement
+fi
+
+# create a placement-client fake service to know we need to configure
+# placement connectivity. We configure the placement service for nova
+# if placement-api or placement-client is active, and n-cpu on the
+# same box.
+if is_service_enabled placement placement-client; then
+  if is_service_enabled n-cpu || is_service_enabled n-sch; then
+    configure_placement_nova_compute
+  fi
+fi
+
+if is_service_enabled horizon; then
+  # dashboard
+  stack_install_service horizon
+fi
+
 echo "FINISH"
