@@ -812,9 +812,9 @@ if is_service_enabled g-api n-api; then
 fi
 
 if is_service_enabled cinder; then
-    # Block volume service
-    stack_install_service cinder
-    configure_cinder
+  # Block volume service
+  stack_install_service cinder
+  configure_cinder
 fi
 
 echo "FINISH"
