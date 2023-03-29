@@ -774,20 +774,47 @@ install_glanceclient
 install_cinderclient
 install_novaclient
 if is_service_enabled swift glance horizon; then
-    install_swiftclient
+  install_swiftclient
 fi
 if is_service_enabled neutron nova horizon; then
-    install_neutronclient
+  install_neutronclient
 fi
 
 # Install middleware
 install_keystonemiddleware
 
 if is_service_enabled keystone; then
-    if [ "$KEYSTONE_SERVICE_HOST" == "$SERVICE_HOST" ]; then
-        stack_install_service keystone
-        configure_keystone
-    fi
+  if [ "$KEYSTONE_SERVICE_HOST" == "$SERVICE_HOST" ]; then
+    stack_install_service keystone
+    configure_keystone
+  fi
+fi
+
+# currently not enable swift
+if is_service_enabled swift; then
+  if is_service_enabled ceilometer; then
+    install_ceilometermiddleware
+  fi
+  stack_install_service swift
+  configure_swift
+
+  # s3api middleware to provide S3 emulation to Swift
+  if is_service_enabled s3api; then
+    # Replace the nova-objectstore port by the swift port
+    S3_SERVICE_PORT=8080
+  fi
+fi
+
+if is_service_enabled g-api n-api; then
+  # Image catalog service
+  stack_install_service glance
+  configure_glance
+fi
+
+if is_service_enabled cinder; then
+    # Block volume service
+    stack_install_service cinder
+    configure_cinder
 fi
 
 echo "FINISH"
