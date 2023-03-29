@@ -817,4 +817,15 @@ if is_service_enabled cinder; then
   configure_cinder
 fi
 
+if is_service_enabled neutron; then
+  # Network service
+  stack_install_service neutron
+fi
+
+if is_service_enabled nova; then
+  # Compute service
+  stack_install_service nova
+  configure_nova
+fi
+
 echo "FINISH"
