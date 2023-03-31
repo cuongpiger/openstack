@@ -38,3 +38,4 @@ uuid-runtime
 wget
 wget
 zlib1g-dev
+iputils-arping
