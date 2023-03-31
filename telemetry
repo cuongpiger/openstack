@@ -1,0 +1,12 @@
+
+[alarm_granularity]
+60 = 
+
+[alarm_threshold]
+10000000 = 
+
+[alarm_metric_name]
+cpu = 
+
+[alarm_aggregation_method]
+rate:mean = 

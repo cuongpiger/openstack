@@ -1,0 +1,46 @@
+
+[skip_scenario_test_list]
+AutoscalingLoadBalancerTest, AutoscalingLoadBalancerv2Test, 
+	    SoftwareConfigIntegrationTest, AodhAlarmTest, CfnInitIntegrationTest, 
+        BasicResourcesTest = 
+AutoscalingLoadBalancerTest, AutoscalingLoadBalancerv2Test, 
+	    SoftwareConfigIntegrationTest, AodhAlarmTest, CfnInitIntegrationTest, 
+        BasicResourcesTest = 
+
+[skip_functional_test_list]
+LoadBalancerv2Test, NotificationTest, 
+        UpdateStackTest.test_stack_update_with_replacing_userdata, 
+        CancelUpdateTest.test_cancel_update_server_with_port = 
+LoadBalancerv2Test, NotificationTest, 
+        UpdateStackTest.test_stack_update_with_replacing_userdata, 
+        CancelUpdateTest.test_cancel_update_server_with_port = 
+
+[username]
+demo = 
+
+[password]
+secret = 
+
+[project_name]
+demo = 
+
+[auth_url]
+http://10.252.18.190/identity = 
+
+[user_domain_id]
+default = 
+
+[project_domain_id]
+default = 
+
+[region]
+RegionOne = 
+
+[auth_version]
+3 = 
+
+[admin_username]
+admin = 
+
+[admin_password]
+secret = 
