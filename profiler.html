@@ -1,0 +1,929 @@
+<!doctype html>
+<html ng-app="app">
+
+<head>
+    <style>
+        .trace {
+            min-width: 900px;
+            width: 100%;
+        }
+
+        .trace tr:hover {
+            background-color: #D9EDF7 !important;
+        }
+
+        .trace tr td {
+            width: 14%;
+            white-space: nowrap;
+            padding: 2px;
+            border-right: 1px solid #EEE;
+        }
+
+        .trace tr td.details {
+            width: 10%;
+            padding-right: 20px;
+        }
+
+        .trace.cursor_pointer_on_hover {
+            cursor: pointer;
+        }
+
+        .trace .level {
+            width: 10%;
+            font-weight: bold;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .duration {
+            width: 25px;
+            margin: 0px;
+            padding: 0px;
+            background-color: #C6EFF3;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+
+        .duration div {
+            padding-top: 4px;
+            padding-bottom: 4px;
+            text-align: center;
+        }
+
+        dl {
+            margin: 5px 0px;
+        }
+
+        .hljs {
+            white-space: pre;
+            word-wrap: normal;
+        }
+
+        .hljs.wrapped {
+            white-space: pre-wrap;
+        }
+
+        .toggle-button {
+            margin-top: -7px;
+        }
+
+    </style>
+    <script>
+        var static_files = false;
+        if (static_files){
+            document.write('<link rel="stylesheet" href="/libs/bootstrap.min.css">');
+            document.write('<link rel="stylesheet" href="/libs/github.min.css">');
+            document.write('<script type="text/javascript" src="/libs/angular.min.js"><\/script>');
+            document.write('<script type="text/javascript" src="/libs/ui-bootstrap-tpls-2.3.1.min.js"><\/script>');
+            document.write('<script type="text/javascript" src="/libs/highlight.min.js"><\/script>');
+            document.write('<script type="text/javascript" src="/libs/angular-highlightjs.min.js"><\/script>');
+            document.write('<script type="text/javascript" src="/libs/angular-ui-tree.min.js"><\/script>');
+            document.write('<script type="text/javascript" src="/libs/angular-ui-tree-filter.js"><\/script>');
+        }
+        else{
+            document.write('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">');
+            document.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/styles/github.min.css">');
+            document.write('<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0/angular.min.js"><\/script>');
+            document.write('<script type="text/javascript" src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.3.1.min.js"><\/script>');
+            document.write('<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"><\/script>');
+            document.write('<script type="text/javascript" src="https://pc035860.github.io/angular-highlightjs/angular-highlightjs.min.js"><\/script>');
+            document.write('<script type="text/javascript" src="https://cdn.rawgit.com/angular-ui-tree/angular-ui-tree/master/dist/angular-ui-tree.min.js"><\/script>');
+            document.write('<script type="text/javascript" src="https://cdn.rawgit.com/EE/angular-ui-tree-filter/master/dist/angular-ui-tree-filter.js"><\/script>');
+        }
+    </script>
+</head>
+
+<body>
+    <script>
+        (function(angular) {
+            'use strict';
+
+            var OSProfilerData = {
+    "info": {
+        "name": "total",
+        "started": 0,
+        "finished": 177,
+        "last_trace_started": 173
+    },
+    "children": [
+        {
+            "info": {
+                "name": "wsgi",
+                "project": "keystone",
+                "service": "public",
+                "host": "anas",
+                "meta.raw_payload.wsgi-stop": {
+                    "name": "wsgi-stop",
+                    "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                    "trace_id": "78748b3d-92de-4b51-9cd8-2eb827c8e4f2",
+                    "parent_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                    "timestamp": "2023-04-02T09:23:02.855680",
+                    "info": {
+                        "host": "anas"
+                    },
+                    "project": "keystone",
+                    "service": "public"
+                },
+                "finished": 6,
+                "exception": "None",
+                "meta.raw_payload.wsgi-start": {
+                    "name": "wsgi-start",
+                    "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                    "trace_id": "78748b3d-92de-4b51-9cd8-2eb827c8e4f2",
+                    "parent_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                    "timestamp": "2023-04-02T09:23:02.849263",
+                    "info": {
+                        "request": {
+                            "path": "/identity/",
+                            "query": "",
+                            "method": "GET",
+                            "scheme": "http"
+                        },
+                        "host": "anas"
+                    },
+                    "project": "keystone",
+                    "service": "public"
+                },
+                "started": 0
+            },
+            "trace_id": "78748b3d-92de-4b51-9cd8-2eb827c8e4f2",
+            "parent_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+            "children": []
+        },
+        {
+            "info": {
+                "name": "wsgi",
+                "project": "keystone",
+                "service": "public",
+                "host": "anas",
+                "meta.raw_payload.wsgi-stop": {
+                    "name": "wsgi-stop",
+                    "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                    "trace_id": "ec5efb10-f141-4b9c-98db-8f45ee79bcee",
+                    "parent_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                    "timestamp": "2023-04-02T09:23:02.873912",
+                    "info": {
+                        "host": "anas"
+                    },
+                    "project": "keystone",
+                    "service": "public"
+                },
+                "finished": 24,
+                "exception": "None",
+                "meta.raw_payload.wsgi-start": {
+                    "name": "wsgi-start",
+                    "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                    "trace_id": "ec5efb10-f141-4b9c-98db-8f45ee79bcee",
+                    "parent_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                    "timestamp": "2023-04-02T09:23:02.858896",
+                    "info": {
+                        "request": {
+                            "path": "/identity/v3/auth/tokens",
+                            "query": "",
+                            "method": "POST",
+                            "scheme": "http"
+                        },
+                        "host": "anas"
+                    },
+                    "project": "keystone",
+                    "service": "public"
+                },
+                "started": 9
+            },
+            "trace_id": "ec5efb10-f141-4b9c-98db-8f45ee79bcee",
+            "parent_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+            "children": [
+                {
+                    "info": {
+                        "name": "db",
+                        "project": "keystone",
+                        "service": "public",
+                        "host": "anas",
+                        "meta.raw_payload.db-stop": {
+                            "name": "db-stop",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "c9323e83-c389-4bbf-bdd2-e46cefa46d9f",
+                            "parent_id": "ec5efb10-f141-4b9c-98db-8f45ee79bcee",
+                            "timestamp": "2023-04-02T09:23:02.863644",
+                            "info": {
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "finished": 14,
+                        "exception": "None",
+                        "meta.raw_payload.db-start": {
+                            "name": "db-start",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "c9323e83-c389-4bbf-bdd2-e46cefa46d9f",
+                            "parent_id": "ec5efb10-f141-4b9c-98db-8f45ee79bcee",
+                            "timestamp": "2023-04-02T09:23:02.862981",
+                            "info": {
+                                "db": {
+                                    "statement": "SELECT 1",
+                                    "params": {}
+                                },
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "started": 13
+                    },
+                    "trace_id": "c9323e83-c389-4bbf-bdd2-e46cefa46d9f",
+                    "parent_id": "ec5efb10-f141-4b9c-98db-8f45ee79bcee",
+                    "children": []
+                },
+                {
+                    "info": {
+                        "name": "db",
+                        "project": "keystone",
+                        "service": "public",
+                        "host": "anas",
+                        "meta.raw_payload.db-stop": {
+                            "name": "db-stop",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "41517cb6-a958-4a5d-9665-51318bf96e15",
+                            "parent_id": "ec5efb10-f141-4b9c-98db-8f45ee79bcee",
+                            "timestamp": "2023-04-02T09:23:02.865281",
+                            "info": {
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "finished": 16,
+                        "exception": "None",
+                        "meta.raw_payload.db-start": {
+                            "name": "db-start",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "41517cb6-a958-4a5d-9665-51318bf96e15",
+                            "parent_id": "ec5efb10-f141-4b9c-98db-8f45ee79bcee",
+                            "timestamp": "2023-04-02T09:23:02.864089",
+                            "info": {
+                                "db": {
+                                    "statement": "SELECT user.enabled AS user_enabled, user.id AS user_id, user.domain_id AS user_domain_id, user.extra AS user_extra, user.default_project_id AS user_default_project_id, user.created_at AS user_created_at, user.last_active_at AS user_last_active_at, password_1.created_at AS password_1_created_at, password_1.expires_at AS password_1_expires_at, password_1.id AS password_1_id, password_1.local_user_id AS password_1_local_user_id, password_1.password_hash AS password_1_password_hash, password_1.created_at_int AS password_1_created_at_int, password_1.expires_at_int AS password_1_expires_at_int, password_1.self_service AS password_1_self_service, local_user_1.id AS local_user_1_id, local_user_1.user_id AS local_user_1_user_id, local_user_1.domain_id AS local_user_1_domain_id, local_user_1.name AS local_user_1_name, local_user_1.failed_auth_count AS local_user_1_failed_auth_count, local_user_1.failed_auth_at AS local_user_1_failed_auth_at, federated_user_1.id AS federated_user_1_id, federated_user_1.user_id AS federated_user_1_user_id, federated_user_1.idp_id AS federated_user_1_idp_id, federated_user_1.protocol_id AS federated_user_1_protocol_id, federated_user_1.unique_id AS federated_user_1_unique_id, federated_user_1.display_name AS federated_user_1_display_name, nonlocal_user_1.domain_id AS nonlocal_user_1_domain_id, nonlocal_user_1.name AS nonlocal_user_1_name, nonlocal_user_1.user_id AS nonlocal_user_1_user_id \nFROM user LEFT OUTER JOIN local_user AS local_user_1 ON user.id = local_user_1.user_id AND user.domain_id = local_user_1.domain_id LEFT OUTER JOIN password AS password_1 ON local_user_1.id = password_1.local_user_id LEFT OUTER JOIN federated_user AS federated_user_1 ON user.id = federated_user_1.user_id LEFT OUTER JOIN nonlocal_user AS nonlocal_user_1 ON user.domain_id = nonlocal_user_1.domain_id AND user.id = nonlocal_user_1.user_id \nWHERE user.id = %(pk_1)s ORDER BY password_1.created_at_int",
+                                    "params": {
+                                        "pk_1": "273d3187a35a48a59bd88c772aff225a"
+                                    }
+                                },
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "started": 14
+                    },
+                    "trace_id": "41517cb6-a958-4a5d-9665-51318bf96e15",
+                    "parent_id": "ec5efb10-f141-4b9c-98db-8f45ee79bcee",
+                    "children": []
+                },
+                {
+                    "info": {
+                        "name": "db",
+                        "project": "keystone",
+                        "service": "public",
+                        "host": "anas",
+                        "meta.raw_payload.db-stop": {
+                            "name": "db-stop",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "57fd4458-7ddb-4bc3-b66b-3e560e75d366",
+                            "parent_id": "ec5efb10-f141-4b9c-98db-8f45ee79bcee",
+                            "timestamp": "2023-04-02T09:23:02.867611",
+                            "info": {
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "finished": 18,
+                        "exception": "None",
+                        "meta.raw_payload.db-start": {
+                            "name": "db-start",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "57fd4458-7ddb-4bc3-b66b-3e560e75d366",
+                            "parent_id": "ec5efb10-f141-4b9c-98db-8f45ee79bcee",
+                            "timestamp": "2023-04-02T09:23:02.866935",
+                            "info": {
+                                "db": {
+                                    "statement": "SELECT user_option.user_id AS user_option_user_id, user_option.option_id AS user_option_option_id, user_option.option_value AS user_option_option_value, anon_1.user_id AS anon_1_user_id \nFROM (SELECT user.id AS user_id \nFROM user \nWHERE user.id = %(pk_1)s) AS anon_1 INNER JOIN user_option ON anon_1.user_id = user_option.user_id",
+                                    "params": {
+                                        "pk_1": "273d3187a35a48a59bd88c772aff225a"
+                                    }
+                                },
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "started": 17
+                    },
+                    "trace_id": "57fd4458-7ddb-4bc3-b66b-3e560e75d366",
+                    "parent_id": "ec5efb10-f141-4b9c-98db-8f45ee79bcee",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "info": {
+                "name": "wsgi",
+                "project": "keystone",
+                "service": "public",
+                "host": "anas",
+                "meta.raw_payload.wsgi-stop": {
+                    "name": "wsgi-stop",
+                    "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                    "trace_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                    "parent_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                    "timestamp": "2023-04-02T09:23:03.026313",
+                    "info": {
+                        "host": "anas"
+                    },
+                    "project": "keystone",
+                    "service": "public"
+                },
+                "finished": 177,
+                "exception": "None",
+                "meta.raw_payload.wsgi-start": {
+                    "name": "wsgi-start",
+                    "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                    "trace_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                    "parent_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                    "timestamp": "2023-04-02T09:23:02.978367",
+                    "info": {
+                        "request": {
+                            "path": "/identity/v3/users",
+                            "query": "",
+                            "method": "POST",
+                            "scheme": "http"
+                        },
+                        "host": "anas"
+                    },
+                    "project": "keystone",
+                    "service": "public"
+                },
+                "started": 129
+            },
+            "trace_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+            "parent_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+            "children": [
+                {
+                    "info": {
+                        "name": "db",
+                        "project": "keystone",
+                        "service": "public",
+                        "host": "anas",
+                        "meta.raw_payload.db-stop": {
+                            "name": "db-stop",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "ba1bb843-c209-4630-acb5-ef4872d7391e",
+                            "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                            "timestamp": "2023-04-02T09:23:02.992161",
+                            "info": {
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "finished": 142,
+                        "exception": "None",
+                        "meta.raw_payload.db-start": {
+                            "name": "db-start",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "ba1bb843-c209-4630-acb5-ef4872d7391e",
+                            "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                            "timestamp": "2023-04-02T09:23:02.981514",
+                            "info": {
+                                "db": {
+                                    "statement": "SELECT 1",
+                                    "params": {}
+                                },
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "started": 132
+                    },
+                    "trace_id": "ba1bb843-c209-4630-acb5-ef4872d7391e",
+                    "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                    "children": []
+                },
+                {
+                    "info": {
+                        "name": "db",
+                        "project": "keystone",
+                        "service": "public",
+                        "host": "anas",
+                        "meta.raw_payload.db-stop": {
+                            "name": "db-stop",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "6aa89611-7952-4fad-9595-2ab5c4986184",
+                            "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                            "timestamp": "2023-04-02T09:23:02.993804",
+                            "info": {
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "finished": 144,
+                        "exception": "None",
+                        "meta.raw_payload.db-start": {
+                            "name": "db-start",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "6aa89611-7952-4fad-9595-2ab5c4986184",
+                            "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                            "timestamp": "2023-04-02T09:23:02.992848",
+                            "info": {
+                                "db": {
+                                    "statement": "SELECT revocation_event.id AS revocation_event_id, revocation_event.domain_id AS revocation_event_domain_id, revocation_event.project_id AS revocation_event_project_id, revocation_event.user_id AS revocation_event_user_id, revocation_event.role_id AS revocation_event_role_id, revocation_event.trust_id AS revocation_event_trust_id, revocation_event.consumer_id AS revocation_event_consumer_id, revocation_event.access_token_id AS revocation_event_access_token_id, revocation_event.issued_before AS revocation_event_issued_before, revocation_event.expires_at AS revocation_event_expires_at, revocation_event.revoked_at AS revocation_event_revoked_at, revocation_event.audit_id AS revocation_event_audit_id, revocation_event.audit_chain_id AS revocation_event_audit_chain_id \nFROM revocation_event \nWHERE revocation_event.issued_before >= %(issued_before_1)s AND (revocation_event.user_id IS NULL OR revocation_event.user_id = %(user_id_1)s) AND (revocation_event.project_id IS NULL OR revocation_event.project_id = %(project_id_1)s) AND (revocation_event.audit_id IS NULL OR revocation_event.audit_id = %(audit_id_1)s)",
+                                    "params": {
+                                        "issued_before_1": "2023-04-02T09:23:02.000000",
+                                        "user_id_1": "273d3187a35a48a59bd88c772aff225a",
+                                        "project_id_1": "6b63d01e619141acbb5f0dfb3d134580",
+                                        "audit_id_1": "DeDBitLxQPa2XakuO-oXCQ"
+                                    }
+                                },
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "started": 143
+                    },
+                    "trace_id": "6aa89611-7952-4fad-9595-2ab5c4986184",
+                    "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                    "children": []
+                },
+                {
+                    "info": {
+                        "name": "db",
+                        "project": "keystone",
+                        "service": "public",
+                        "host": "anas",
+                        "meta.raw_payload.db-stop": {
+                            "name": "db-stop",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "06580f17-22be-4d28-93d6-122de4c1021d",
+                            "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                            "timestamp": "2023-04-02T09:23:03.006827",
+                            "info": {
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "finished": 157,
+                        "exception": "None",
+                        "meta.raw_payload.db-start": {
+                            "name": "db-start",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "06580f17-22be-4d28-93d6-122de4c1021d",
+                            "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                            "timestamp": "2023-04-02T09:23:03.006006",
+                            "info": {
+                                "db": {
+                                    "statement": "SELECT 1",
+                                    "params": {}
+                                },
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "started": 156
+                    },
+                    "trace_id": "06580f17-22be-4d28-93d6-122de4c1021d",
+                    "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                    "children": []
+                },
+                {
+                    "info": {
+                        "name": "db",
+                        "project": "keystone",
+                        "service": "public",
+                        "host": "anas",
+                        "meta.raw_payload.db-stop": {
+                            "name": "db-stop",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "aa0541d8-1985-4af3-b421-152f9ffb83f8",
+                            "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                            "timestamp": "2023-04-02T09:23:03.008338",
+                            "info": {
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "finished": 159,
+                        "exception": "None",
+                        "meta.raw_payload.db-start": {
+                            "name": "db-start",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "aa0541d8-1985-4af3-b421-152f9ffb83f8",
+                            "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                            "timestamp": "2023-04-02T09:23:03.007810",
+                            "info": {
+                                "db": {
+                                    "statement": "INSERT INTO user (id, domain_id, enabled, extra, default_project_id, created_at, last_active_at) VALUES (%(id)s, %(domain_id)s, %(enabled)s, %(extra)s, %(default_project_id)s, %(created_at)s, %(last_active_at)s)",
+                                    "params": {
+                                        "id": "365788f4f4dd4fffa0b02c7ff859edfc",
+                                        "domain_id": "default",
+                                        "enabled": 1,
+                                        "extra": "{}",
+                                        "default_project_id": null,
+                                        "created_at": "2023-04-02T09:23:03.003201",
+                                        "last_active_at": null
+                                    }
+                                },
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "started": 158
+                    },
+                    "trace_id": "aa0541d8-1985-4af3-b421-152f9ffb83f8",
+                    "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                    "children": []
+                },
+                {
+                    "info": {
+                        "name": "db",
+                        "project": "keystone",
+                        "service": "public",
+                        "host": "anas",
+                        "meta.raw_payload.db-stop": {
+                            "name": "db-stop",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "622c9f49-efe8-4741-8aa2-2ec3005a9895",
+                            "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                            "timestamp": "2023-04-02T09:23:03.014737",
+                            "info": {
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "finished": 165,
+                        "exception": "None",
+                        "meta.raw_payload.db-start": {
+                            "name": "db-start",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "622c9f49-efe8-4741-8aa2-2ec3005a9895",
+                            "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                            "timestamp": "2023-04-02T09:23:03.013963",
+                            "info": {
+                                "db": {
+                                    "statement": "INSERT INTO local_user (user_id, domain_id, name, failed_auth_count, failed_auth_at) VALUES (%(user_id)s, %(domain_id)s, %(name)s, %(failed_auth_count)s, %(failed_auth_at)s)",
+                                    "params": {
+                                        "user_id": "365788f4f4dd4fffa0b02c7ff859edfc",
+                                        "domain_id": "default",
+                                        "name": "cuongdm3",
+                                        "failed_auth_count": 0,
+                                        "failed_auth_at": null
+                                    }
+                                },
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "started": 164
+                    },
+                    "trace_id": "622c9f49-efe8-4741-8aa2-2ec3005a9895",
+                    "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                    "children": []
+                },
+                {
+                    "info": {
+                        "name": "db",
+                        "project": "keystone",
+                        "service": "public",
+                        "host": "anas",
+                        "meta.raw_payload.db-stop": {
+                            "name": "db-stop",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "0fb79c15-d89b-45fa-8713-ceb7118a3487",
+                            "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                            "timestamp": "2023-04-02T09:23:03.022240",
+                            "info": {
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "finished": 172,
+                        "exception": "None",
+                        "meta.raw_payload.db-start": {
+                            "name": "db-start",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "0fb79c15-d89b-45fa-8713-ceb7118a3487",
+                            "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                            "timestamp": "2023-04-02T09:23:03.021795",
+                            "info": {
+                                "db": {
+                                    "statement": "SELECT 1",
+                                    "params": {}
+                                },
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "started": 172
+                    },
+                    "trace_id": "0fb79c15-d89b-45fa-8713-ceb7118a3487",
+                    "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                    "children": []
+                },
+                {
+                    "info": {
+                        "name": "db",
+                        "project": "keystone",
+                        "service": "public",
+                        "host": "anas",
+                        "meta.raw_payload.db-stop": {
+                            "name": "db-stop",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "444dc7b5-b567-4b9d-b86a-7f61c2ca88b5",
+                            "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                            "timestamp": "2023-04-02T09:23:03.023215",
+                            "info": {
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "finished": 173,
+                        "exception": "None",
+                        "meta.raw_payload.db-start": {
+                            "name": "db-start",
+                            "base_id": "de666377-594c-4d4f-94cc-f22be33023c1",
+                            "trace_id": "444dc7b5-b567-4b9d-b86a-7f61c2ca88b5",
+                            "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                            "timestamp": "2023-04-02T09:23:03.022618",
+                            "info": {
+                                "db": {
+                                    "statement": "SELECT service.id AS service_id, service.type AS service_type, service.enabled AS service_enabled, service.extra AS service_extra \nFROM service",
+                                    "params": {}
+                                },
+                                "host": "anas"
+                            },
+                            "project": "keystone",
+                            "service": "public"
+                        },
+                        "started": 173
+                    },
+                    "trace_id": "444dc7b5-b567-4b9d-b86a-7f61c2ca88b5",
+                    "parent_id": "69202b2e-5233-40d5-9ede-e15218478c82",
+                    "children": []
+                }
+            ]
+        }
+    ],
+    "stats": {
+        "wsgi": {
+            "count": 3,
+            "duration": 69
+        },
+        "db": {
+            "count": 10,
+            "duration": 18
+        }
+    }
+};
+
+            angular
+                .module('app', ['ui.bootstrap', 'hljs', 'ui.tree', 'ui.tree-filter'])
+                .config(['$rootScopeProvider', function ($rootScopeProvider) {
+                    $rootScopeProvider.digestTtl(50);
+                }])
+                .config(['hljsServiceProvider', function (hljsServiceProvider) {
+                    hljsServiceProvider.setOptions({
+                        // replace tab with 4 spaces
+                        tabReplace: '    '
+                    });
+                }])
+                .config(['uiTreeFilterSettingsProvider', function (uiTreeFilterSettingsProvider) {
+                    uiTreeFilterSettingsProvider.addresses = [
+                        'info.name',
+                        'info.project',
+                        'info.service',
+                        'info.host'
+                    ];
+                    uiTreeFilterSettingsProvider.descendantCollection = 'children';
+                }])
+                .controller('ProfilerController', ProfilerController)
+                .controller('ModalInstanceController', ModalInstanceController);
+
+            // Inject services
+            ProfilerController.$inject = ['$filter', '$uibModal'];
+            ModalInstanceController.$inject = ['$uibModalInstance', 'info'];
+
+            function ProfilerController($filter, $uibModal) {
+                // NOTE(tovin07): Bind this to vm. This is controller as and vm syntax.
+                // This style is mainstream now. It replaces $scope style.
+                // Ref: https://johnpapa.net/angularjss-controller-as-and-the-vm-variable/
+                var vm = this;
+
+                vm.filter = $filter('uiTreeFilter');
+
+                var converInput = function(input, level) {
+                    level = (level) ? level : 0;
+                    input.level = level;
+                    input.is_leaf = !input.children.length;
+
+                    for (var i = 0; i < input.children.length; i++) {
+                        converInput(input.children[i], level + 1);
+                    }
+                    return input;
+                };
+
+                vm.isLastTrace = function(started) {
+                    if (started >=0 && started == vm.tree[0].info.last_trace_started) {
+                        return true;
+                    }
+                    return false;
+                };
+
+                vm.getWidth = function(data) {
+                    var fullDuration = vm.tree[0].info.finished;
+                    var duration = (data.info.finished - data.info.started) * 100.0 / fullDuration;
+                    return (duration >= 0.5) ? duration : 0.5;
+                };
+
+                vm.getStarted = function(data) {
+                    var fullDuration = vm.tree[0].info.finished;
+                    return data.info.started * 100.0 / fullDuration;
+                };
+
+                vm.isImportance = function(data) {
+                    return ['total', 'wsgi', 'rpc'].indexOf(data.info.name) != -1;
+                };
+
+                vm.display = function(data) {
+                    $uibModal.open({
+                        animation: true,
+                        templateUrl: 'modal_renderer.html',
+                        controller: 'ModalInstanceController',
+                        controllerAs: 'modal',
+                        size: 'lg',
+                        resolve: {
+                            info: function() {
+                                return angular.copy(data.info);
+                            }
+                        }
+                    });
+                };
+
+                vm.tree = [converInput(OSProfilerData)];
+            }
+
+            function ModalInstanceController($uibModalInstance, info){
+                var modal = this;
+                var metadata = {};
+                angular.forEach(info, function(value, key) {
+                    var parts = key.split('.');
+                    var metaText = 'meta';
+                    if (parts[0] == metaText) {
+                        if (parts.length == 2) {
+                            this[parts[1]] = value;
+                        } else {
+                            var groupName = parts[1];
+                            if (!(groupName in this)) {
+                                this[groupName] = {};
+                            }
+                            // Plus 2 for 2 dots such as: meta.raw_payload.heat.wsgi-start
+                            var index = metaText.length + parts[1].length + 2;
+                            this[groupName][key.slice(index)] = value;
+                        }
+                    };
+                }, metadata);
+
+                info.duration = info.finished - info.started;
+                // Escape single-quotes to prevent angular parse lexerr
+                info.metadata = JSON.stringify(metadata, null, 4).replace(/'/g, "\\'");
+
+                // Bind to view model
+                modal.info = info;
+
+                modal.columns = [
+                    ['name', 'project', 'service', 'host'],
+                    ['started', 'finished', 'duration', 'exception']
+                ];
+
+                modal.toggleWrap = function() {
+                    var element = angular.element(document.querySelector('code.hljs'));
+
+                    var wrappedClass = 'wrapped';
+                    var isWrapped = element.hasClass(wrappedClass);
+                    if (isWrapped) {
+                        element.removeClass(wrappedClass);
+                    } else {
+                        element.addClass(wrappedClass);
+                    }
+                };
+
+                modal.close = function() {
+                    $uibModalInstance.dismiss('close');
+                };
+            }
+        })(window.angular);
+    </script>
+    <!--Tree item template-->
+    <script type="text/ng-template" id="tree_item_renderer.html">
+        <div ng-init="hide_children=false">
+            <table class="trace cursor_pointer_on_hover">
+                <tr ng-class="{'bg-success': vm.isLastTrace(data.info.started)}">
+                    <td class="level" style="padding-left: {{::data.level * 5}}px;">
+                        <button type="button" class="btn btn-default btn-xs" ng-disabled="data.is_leaf" ng-click="hide_children=!hide_children">
+                            <span class="glyphicon glyphicon-{{(data.is_leaf) ? 'cloud' : ((hide_children) ? 'plus': 'minus')}}"></span>
+                            {{::data.level || 0}}
+                        </button>
+                    </td>
+                    <td ng-click="vm.display(data)" class="text-center">
+                        <div class="duration" style="width: {{vm.getWidth(data)}}%; margin-left: {{vm.getStarted(data)}}%;">
+                            <div>{{data.info.finished - data.info.started}} ms</div>
+                        </div>
+                    </td>
+                    <td ng-click="vm.display(data)" class="{{vm.isImportance(data) ? 'bold' : ''}} text-right">{{::data.info.name}}</td>
+                    <td ng-click="vm.display(data)">{{::data.info.project || "n/a"}}</td>
+                    <td ng-click="vm.display(data)">{{::data.info.service || "n/a"}}</td>
+                    <td ng-click="vm.display(data)">{{::data.info.host || "n/a"}}</td>
+                    <td class="details">
+                        <a href="#" ng-click="vm.display(data)">Details</a>
+                    </td>
+                </tr>
+            </table>
+            <div ui-tree-nodes ng-model="data.children" ng-hide="hide_children">
+                <div ui-tree-node ng-repeat="data in data.children" ng-include="'tree_item_renderer.html'" ng-hide="!vm.filter(data, vm.filterPattern)"></div>
+            </div>
+        </div>
+    </script>
+    <!--Modal template-->
+    <script type="text/ng-template" id="modal_renderer.html">
+        <div class="modal-header">
+            <h3 class="text-center">
+                <strong>Trace Point Details</strong>
+                <span class="btn btn-default pull-right toggle-button" ng-click="modal.toggleWrap()">Toggle wrap-text</span>
+            </h3>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6" ng-repeat="cols in modal.columns">
+                    <dl class="dl-horizontal" ng-repeat="column in cols">
+                        <dt class="text-capitalize">{{::column}}</dt>
+                        <dd>{{::modal.info[column]}}</dd>
+                    </dl>
+                </div>
+                <div class="col-md-12">
+                    <!--For metadata only-->
+                    <dl class="dl-horizontal">
+                        <dt class="text-capitalize">metadata</dt>
+                        <dd hljs hljs-language="json" hljs-source="'{{::modal.info.metadata}}'"></dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <span class="btn btn-default" ng-click="modal.close()">Close</span>
+        </div>
+    </script>
+    <!--Body-->
+    <div ng-controller="ProfilerController as vm">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="filterPattern" class="col-md-4 control-label">Span filtering:</label>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="filterPattern"
+                        placeholder="Input your regular expression pattern here"
+                        ng-model="vm.filterPattern">
+                </div>
+            </div>
+        </form>
+        <table class="trace">
+            <tr class="bold text-left" style="border-bottom: solid 1px gray;">
+                <td class="level">Levels</td>
+                <td>Duration</td>
+                <td class="text-right">Type</td>
+                <td>Project</td>
+                <td>Service</td>
+                <td>Host</td>
+                <td class="details">Details</td>
+            </tr>
+        </table>
+        <div ui-tree>
+            <div ui-tree-nodes ng-model="vm.tree">
+                <div ui-tree-node ng-repeat="data in vm.tree" ng-include="'tree_item_renderer.html'" ng-hide="!vm.filter(data, vm.filterPattern)"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
