@@ -65,19 +65,19 @@ if ! isset ENABLED_SERVICES; then
   # Keystone - nothing works without keystone
   ENABLED_SERVICES=key
   # Nova - services to support libvirt based openstack clouds
-  ENABLED_SERVICES+=,n-api,n-cpu,n-cond,n-sch,n-novnc,n-api-meta
-  # Placement service needed for Nova
-  ENABLED_SERVICES+=,placement-api,placement-client
-  # Glance services needed for Nova
-  ENABLED_SERVICES+=,g-api
-  # Cinder
-  ENABLED_SERVICES+=,c-sch,c-api,c-vol
-  # OVN
-  ENABLED_SERVICES+=,ovn-controller,ovn-northd,ovs-vswitchd,ovsdb-server
-  # Neutron
-  ENABLED_SERVICES+=,q-svc,q-ovn-metadata-agent
-  # Dashboard
-  ENABLED_SERVICES+=,horizon
+#   ENABLED_SERVICES+=,n-api,n-cpu,n-cond,n-sch,n-novnc,n-api-meta
+#   # Placement service needed for Nova
+#   ENABLED_SERVICES+=,placement-api,placement-client
+#   # Glance services needed for Nova
+#   ENABLED_SERVICES+=,g-api
+#   # Cinder
+#   ENABLED_SERVICES+=,c-sch,c-api,c-vol
+#   # OVN
+#   ENABLED_SERVICES+=,ovn-controller,ovn-northd,ovs-vswitchd,ovsdb-server
+#   # Neutron
+#   ENABLED_SERVICES+=,q-svc,q-ovn-metadata-agent
+#   # Dashboard
+#   ENABLED_SERVICES+=,horizon
   # Additional services
   ENABLED_SERVICES+=,rabbit,tempest,mysql,etcd3,dstat
 fi
@@ -827,7 +827,7 @@ ENABLE_DEBUG_LOG_LEVEL=$(trueorfalse True ENABLE_DEBUG_LOG_LEVEL)
 # Note that setting ``FIXED_RANGE`` may be necessary when running DevStack
 # in an OpenStack cloud that uses either of these address ranges internally.
 FLOATING_RANGE=${FLOATING_RANGE:-172.24.4.0/24}
-IPV4_ADDRS_SAFE_TO_USE=${IPV4_ADDRS_SAFE_TO_USE:-10.1.0.0/22}
+IPV4_ADDRS_SAFE_TO_USE=${IPV4_ADDRS_SAFE_TO_USE:-10.0.0.0/22}
 FIXED_RANGE=${FIXED_RANGE:-$IPV4_ADDRS_SAFE_TO_USE}
 HOST_IP_IFACE=${HOST_IP_IFACE:-}
 HOST_IP=${HOST_IP:-}
