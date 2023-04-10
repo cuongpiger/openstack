@@ -1,12 +1,10 @@
 # Generated file, do not edit
 
-
 ADMIN_PASSWORD=secret
 DATABASE_PASSWORD=$ADMIN_PASSWORD
 RABBIT_PASSWORD=$ADMIN_PASSWORD
 SERVICE_PASSWORD=$ADMIN_PASSWORD
 
-OSPROFILER_COLLECTOR=redis
-
+OSPROFILER_COLLECTOR=jaeger
 # Enable OSProfiler plugin
 enable_plugin osprofiler https://opendev.org/openstack/osprofiler master
