@@ -47,3 +47,20 @@
   source tools/devstack.sh
   stack_all
   ```
+
+## 2.1. Relevant things
+* Go to this link to download the OpenRC file: 
+  `http://<multipass vm host>/dashboard/project/api_access`
+
+* The Jaeger UI is at:
+  `http://<multipass vm host>:16686`
+
+* Create new user in Keystone with tracing using CLI:
+  ```bash
+  openstack user create cuongdm3 --os-profile SECRET_KEY
+  ```
+
+* Exec the Docker command in the VM:
+  ```bash
+  sg docker -c '<docker command>'
+  ```
