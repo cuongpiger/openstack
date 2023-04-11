@@ -64,3 +64,8 @@
   ```bash
   sg docker -c '<docker command>'
   ```
+
+* If you exited the Multipass VM previously, to use Jeager must be run this command before operating with OpenStack features:
+  ```bash
+  sg docker -c 'docker container start jaeger'
+  ```
