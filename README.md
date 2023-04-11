@@ -2,7 +2,7 @@
 * Copy the config files:
   ```bash
   cp -r installation/keystone_redis/local.conf .
-  cp -r installation/keystone_redis/openrc .
+  cp -r installation/keystone_redis/stackrc .
   ```
 
 * Run the Multipass env:
@@ -27,7 +27,7 @@
 * Copy the config files:
   ```bash
   cp -r installation/keystone_jaeger/local.conf .
-  cp -r installation/keystone_jaeger/openrc .
+  cp -r installation/keystone_jaeger/stackrc .
   ```
 
 * Run the Multipass env:
