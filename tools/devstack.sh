@@ -2,7 +2,7 @@
 
 # Install and run the OpenStack cloud.
 stack_all() {
-    cd /devstack && clear && ./stack.sh
+    cd ~/devstack && clear && ./stack.sh
 }
 
 # Unstack and clean the OpenStack installation.
