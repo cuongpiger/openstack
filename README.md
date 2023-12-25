@@ -1228,3 +1228,20 @@ curl -k https://49.213.90.199
   >     font-family: Ubuntu, Verdana, sans-serif;
   > ...
   > ```
+
+- You can print statistics about your loadbalancer using:
+```bash=
+openstack loadbalancer stats show myloadbalancer-01
+```
+  > ```bash=
+  > root@ENG-DEV-OPS-01:/home/cuongdm3# openstack loadbalancer stats show myloadbalancer-01
+  > +--------------------+-------+
+  > | Field              | Value |
+  > +--------------------+-------+
+  > | active_connections | 0     |
+  > | bytes_in           | 0     |
+  > | bytes_out          | 0     |
+  > | request_errors     | 0     |
+  > | total_connections  | 0     |
+  > +--------------------+-------+
+  > ```
